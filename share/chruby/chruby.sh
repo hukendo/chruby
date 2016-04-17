@@ -1,4 +1,4 @@
-CHRUBY_VERSION="0.3.9"
+CHRUBY_VERSION="0.4.0"
 RUBIES=()
 
 for dir in "$PREFIX/opt/rubies" "$HOME/.rubies"; do
@@ -6,8 +6,7 @@ for dir in "$PREFIX/opt/rubies" "$HOME/.rubies"; do
 done
 unset dir
 
-function chruby_reset()
-{
+function chruby_reset(){
 	[[ -z "$RUBY_ROOT" ]] && return
 
 	PATH=":$PATH:"; PATH="${PATH//:$RUBY_ROOT\/bin:/:}"
@@ -30,8 +29,37 @@ function chruby_reset()
 	hash -r
 }
 
-function chruby_use()
-{
+
+# export RUBY_ENGINE, RUBY_VERSION, GEM_ROOT
+function chruby_env(){
+RUBYGEMS_GEMDEPS="" $1 - <<EOF
+puts "export RUBY_ENGINE=#{Object.const_defined?(:RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'};"
+puts "export RUBY_VERSION=#{RUBY_VERSION};"
+begin
+  require 'rubygems'
+  puts "export GEM_ROOT=#{Gem.default_dir.inspect};"
+  rescue LoadError
+end
+EOF
+}
+
+#Возвращает shell код экспортирующий переменные
+function chruby_export(){
+	RUBY_PATH="$1"
+	echo 'export RUBYGEMS_GEMDEPS=-'
+	echo "export RUBY_ROOT="${RUBY_PATH%%/bin/ruby}""
+	echo 'export PATH="$RUBY_ROOT/bin:$PATH"'
+	echo "$(chruby_env "$RUBY_PATH")"
+	echo 'export PATH="${GEM_ROOT:+$GEM_ROOT/bin:}$PATH"'
+
+	if (( UID != 0 )); then
+		echo 'export GEM_HOME="$HOME/.gem/$RUBY_ENGINE/$RUBY_VERSION"'
+		echo 'export GEM_PATH="$GEM_HOME${GEM_ROOT:+:$GEM_ROOT}${GEM_PATH:+:$GEM_PATH}"'
+		echo 'export PATH="$GEM_HOME/bin:$PATH"'
+	fi
+}
+
+function chruby_use(){
 	if [[ ! -x "$1/bin/ruby" ]]; then
 		echo "chruby: $1/bin/ruby not executable" >&2
 		return 1
@@ -42,13 +70,7 @@ function chruby_use()
 	export RUBY_ROOT="$1"
 	export RUBYOPT="$2"
 	export PATH="$RUBY_ROOT/bin:$PATH"
-
-	eval "$(RUBYGEMS_GEMDEPS="" "$RUBY_ROOT/bin/ruby" - <<EOF
-puts "export RUBY_ENGINE=#{Object.const_defined?(:RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'};"
-puts "export RUBY_VERSION=#{RUBY_VERSION};"
-begin; require 'rubygems'; puts "export GEM_ROOT=#{Gem.default_dir.inspect};"; rescue LoadError; end
-EOF
-)"
+	eval "$(chruby_env $RUBY_ROOT/bin/ruby)"
 	export PATH="${GEM_ROOT:+$GEM_ROOT/bin:}$PATH"
 
 	if (( UID != 0 )); then
@@ -60,8 +82,7 @@ EOF
 	hash -r
 }
 
-function chruby()
-{
+function chruby(){
 	case "$1" in
 		-h|--help)
 			echo "usage: chruby [RUBY|VERSION|system] [RUBYOPT...]"
