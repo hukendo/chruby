@@ -43,7 +43,8 @@ end
 EOF
 }
 
-#Возвращает shell код экспортирующий переменные
+#usage chruby_export /path/to/ruby
+#get current ruby export variables: chruby_export $(where ruby | head -1)
 function chruby_export(){
 	RUBY_PATH="$1"
 	echo 'export RUBYGEMS_GEMDEPS=-'
