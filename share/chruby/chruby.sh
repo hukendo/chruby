@@ -1,3 +1,4 @@
+#!/bin/bash
 CHRUBY_VERSION="0.4.0"
 RUBIES=()
 
@@ -46,21 +47,24 @@ EOF
 #usage chruby_export /path/to/ruby
 #get current ruby export variables: chruby_export $(where ruby | head -1)
 function chruby_export(){
-	RUBY_PATH="$1/bin/ruby"
+	local RUBY_PATH="$1/bin/ruby"
 	if [[ ! -x "$RUBY_PATH" ]]; then
 		echo "chruby_export: $RUBY_PATH/bin/ruby not executable" >&2
 		return 1
 	fi
-	echo 'export RUBYGEMS_GEMDEPS=-'
-	echo "export RUBY_ROOT="${RUBY_PATH%%/bin/ruby}""
-	echo 'export PATH="$RUBY_ROOT/bin:$PATH"'
-	echo "$(chruby_env "$RUBY_PATH")"
-	echo 'export PATH="${GEM_ROOT:+$GEM_ROOT/bin:}$PATH"'
-
+	<<EOF
+export RUBYGEMS_GEMDEPS=-
+export RUBY_ROOT="${RUBY_PATH%%/bin/ruby}"
+export PATH="\$RUBY_ROOT/bin:\$PATH"
+$(chruby_env "$RUBY_PATH")
+export PATH="\${GEM_ROOT:+\$GEM_ROOT/bin:}\$PATH"
+EOF
 	if (( UID != 0 )); then
-		echo 'export GEM_HOME="$HOME/.gem/$RUBY_ENGINE/$RUBY_VERSION"'
-		echo 'export GEM_PATH="$GEM_HOME${GEM_ROOT:+:$GEM_ROOT}${GEM_PATH:+:$GEM_PATH}"'
-		echo 'export PATH="$GEM_HOME/bin:$PATH"'
+		cat<<EOF
+export GEM_HOME="\$HOME/.gem/$RUBY_ENGINE/$RUBY_VERSION"
+export GEM_PATH="\$GEM_HOME\${GEM_ROOT:+:\$GEM_ROOT}\${GEM_PATH:+:\$GEM_PATH}"
+export PATH="\$GEM_HOME/bin:\$PATH"
+EOF
 	fi
 }
 
@@ -91,8 +95,7 @@ function chruby()(
 	ruby-list(){
 		local dir ruby ruby_path
 			for dir in "${RUBIES[@]}"; do
-				if [[ "$1" = "path" ]]
-				then
+				if [[ "$1" = "path" ]]; then
 					ruby_path="$dir"
 				fi
 				dir="${dir%%/}"; ruby="${dir##*/}"
