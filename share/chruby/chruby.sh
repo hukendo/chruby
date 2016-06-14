@@ -47,6 +47,10 @@ EOF
 #get current ruby export variables: chruby_export $(where ruby | head -1)
 function chruby_export(){
 	RUBY_PATH="$1"
+	if [[ ! -x "$RUBY_PATH" ]]; then
+		echo "chruby_export: $RUBY_PATH/bin/ruby not executable" >&2
+		return 1
+	fi
 	echo 'export RUBYGEMS_GEMDEPS=-'
 	echo "export RUBY_ROOT="${RUBY_PATH%%/bin/ruby}""
 	echo 'export PATH="$RUBY_ROOT/bin:$PATH"'
