@@ -46,7 +46,7 @@ EOF
 #usage chruby_export /path/to/ruby
 #get current ruby export variables: chruby_export $(where ruby | head -1)
 function chruby_export(){
-	RUBY_PATH="$1"
+	RUBY_PATH="$1/bin/ruby"
 	if [[ ! -x "$RUBY_PATH" ]]; then
 		echo "chruby_export: $RUBY_PATH/bin/ruby not executable" >&2
 		return 1
@@ -87,7 +87,24 @@ function chruby_use(){
 	hash -r
 }
 
-function chruby(){
+function chruby()(
+	ruby-list(){
+		local dir ruby ruby_path
+			for dir in "${RUBIES[@]}"; do
+				if [[ "$1" = "path" ]]
+				then
+					ruby_path="$dir"
+				fi
+				dir="${dir%%/}"; ruby="${dir##*/}"
+				if [[ "$dir" == "$RUBY_ROOT" ]]; then
+					#echo " *\t ${RUBYOPT} \t$ruby_path"
+					printf "*%-20s\t%s\t%s\n" "${ruby}" "${RUBYOPT}" "$ruby_path"
+				else
+					#echo " -\t${ruby} \t$ruby_path" | column -t
+					printf "-%-20s\t%s\t%s\n" "${ruby}" "" "$ruby_path"
+				fi
+			done
+}
 	case "$1" in
 		-h|--help)
 			echo "usage: chruby [RUBY|VERSION|system] [RUBYOPT...]"
@@ -96,16 +113,10 @@ function chruby(){
 			echo "chruby: $CHRUBY_VERSION"
 			;;
 		"")
-			local dir ruby
-			for dir in "${RUBIES[@]}"; do
-				dir="${dir%%/}"; ruby="${dir##*/}"
-				if [[ "$dir" == "$RUBY_ROOT" ]]; then
-					echo " * ${ruby} ${RUBYOPT}"
-				else
-					echo "   ${ruby}"
-				fi
-
-			done
+			ruby-list
+			;;
+		"-p")
+			ruby-list path
 			;;
 		system) chruby_reset ;;
 		*)
@@ -127,4 +138,4 @@ function chruby(){
 			chruby_use "$match" "$*"
 			;;
 	esac
-}
+	)
