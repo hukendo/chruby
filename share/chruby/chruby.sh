@@ -97,7 +97,7 @@ function chruby(){
 				if [[ "$dir" == "$RUBY_ROOT" ]]; then
 					echo " * ${ruby} ${RUBYOPT}"
 				else
-					echo "  ${ruby}"
+					echo "   ${ruby}"
 				fi
 
 			done
