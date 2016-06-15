@@ -93,23 +93,24 @@ function chruby_use(){
   set +x
 }
 
-function chruby(){
-  ruby-list(){
-    local dir ruby ruby_path
-      for dir in "${RUBIES[@]}"; do
-        if [[ "$1" = "path" ]]; then
-          ruby_path="$dir"
-        fi
-        dir="${dir%%/}"; ruby="${dir##*/}"
-        if [[ "$dir" == "$RUBY_ROOT" ]]; then
-          #echo " *\t ${RUBYOPT} \t$ruby_path"
-          printf " * %-20s\t%s\t%s\n" "${ruby}" "${RUBYOPT}" "$ruby_path"
-        else
-          #echo " -\t${ruby} \t$ruby_path" | column -t
-          printf " - %-20s\t%s\t%s\n" "${ruby}" "" "$ruby_path"
-        fi
-      done
+chruby_rubies(){
+  local dir ruby ruby_path
+    for dir in "${RUBIES[@]}"; do
+      if [[ "$1" = "-p" ]]; then
+        ruby_path="$dir"
+      fi
+      dir="${dir%%/}"; ruby="${dir##*/}"
+      if [[ "$dir" == "$RUBY_ROOT" ]]; then
+        #echo " *\t ${RUBYOPT} \t$ruby_path"
+        printf " * %-20s\t%s\t%s\n" "${ruby}" "${RUBYOPT}" "$ruby_path"
+      else
+        #echo " -\t${ruby} \t$ruby_path" | column -t
+        printf " - %-20s\t%s\t%s\n" "${ruby}" "" "$ruby_path"
+      fi
+    done
 }
+
+function chruby(){
   case "$1" in
     -h|--help)
       echo "usage: chruby [RUBY|VERSION|system] [RUBYOPT...]"
@@ -118,10 +119,10 @@ function chruby(){
       echo "chruby: $CHRUBY_VERSION"
       ;;
     "")
-      ruby-list
+      chruby_rubies
       ;;
     "-p")
-      ruby-list path
+      chruby_rubies path
       ;;
     system) chruby_reset ;;
     *)
