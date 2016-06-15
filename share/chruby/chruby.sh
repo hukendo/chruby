@@ -122,7 +122,7 @@ function chruby(){
       chruby_rubies
       ;;
     "-p")
-      chruby_rubies path
+      chruby_rubies -p
       ;;
     system) chruby_reset ;;
     *)
