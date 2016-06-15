@@ -1,5 +1,5 @@
 #!/bin/bash
-CHRUBY_VERSION="0.4.0"
+CHRUBY_VERSION="0.4.1"
 RUBIES=()
 
 for dir in "$PREFIX/opt/rubies" "$HOME/.rubies"; do
