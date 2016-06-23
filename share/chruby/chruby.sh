@@ -69,7 +69,6 @@ EOF
 }
 
 function chruby_use(){
-  set -x
   if [[ ! -x "$1/bin/ruby" ]]; then
     echo "chruby: $1/bin/ruby not executable" >&2
     return 1
@@ -90,7 +89,6 @@ function chruby_use(){
   fi
 
   hash -r
-  set +x
 }
 
 chruby_rubies(){
