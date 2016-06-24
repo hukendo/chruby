@@ -1,0 +1,9 @@
+before_script:
+  - apt-get update -qq && apt-get install -y -qq shunit2
+  - ruby -v
+  - which ruby
+  - which shunit2
+
+test:
+  script:
+    - make test
