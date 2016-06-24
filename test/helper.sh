@@ -1,6 +1,4 @@
-#[[ -z "$SHUNIT2"     ]] && SHUNIT2=/usr/share/shunit2/shunit2
-#[[ -z "$SHUNIT2"     ]] && SHUNIT2=/usr/local/bin/shunit2
-[[ -z "$SHUNIT2"     ]] && SHUNIT2=/usr/bin/shunit2
+[[ -z "$SHUNIT2"     ]] && SHUNIT2=$(which shunit2)
 [[ -n "$ZSH_VERSION" ]] && setopt shwordsplit
 
 export PREFIX="$PWD/test"

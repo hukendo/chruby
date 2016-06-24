@@ -11,9 +11,8 @@ function test_chruby_auto_loaded_in_zsh()
 {
 	[[ -n "$ZSH_VERSION" ]] || return
 
-	assertEquals "did not add chruby_auto to preexec_functions" \
-		     "chruby_auto" \
-		     "$preexec_functions"
+	assertTrue "did not add chruby_auto to preexec_functions" \
+		     'echo $preexec_functions | grep chruby_auto '
 }
 
 function test_chruby_auto_loaded_in_bash()
