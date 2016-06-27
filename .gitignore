@@ -1,4 +1,5 @@
 /doc/
+/builds/*
 /pkg/*.tar.gz
 /pkg/*.tar.bz2
 /pkg/*.zip
