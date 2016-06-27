@@ -44,15 +44,15 @@ end
 EOF
 }
 
-#usage chruby_export /path/to/ruby
+#usage chruby-export /path/to/ruby
 #get current ruby export variables: chruby_export $(where ruby | head -1)
-function chruby_export(){
+function chruby-export(){
   local RUBY_PATH="$1/bin/ruby"
   if [[ ! -x "$RUBY_PATH" ]]; then
     echo "chruby_export: $RUBY_PATH/bin/ruby not executable" >&2
     return 1
   fi
-  <<EOF
+  cat <<EOF
 export RUBYGEMS_GEMDEPS=-
 export RUBY_ROOT="${RUBY_PATH%%/bin/ruby}"
 export PATH="\$RUBY_ROOT/bin:\$PATH"
@@ -91,7 +91,7 @@ function chruby_use(){
   hash -r
 }
 
-chruby_rubies(){
+chruby-rubies(){
   local dir ruby ruby_path
     for dir in "${RUBIES[@]}"; do
       if [[ "$1" = "-p" ]]; then
@@ -112,15 +112,16 @@ function chruby(){
   case "$1" in
     -h|--help)
       echo "usage: chruby [RUBY|VERSION|system] [RUBYOPT...]"
+      echo " -p  show path"
       ;;
     -v|--version)
       echo "chruby: $CHRUBY_VERSION"
       ;;
     "")
-      chruby_rubies
+      chruby-rubies
       ;;
     "-p")
-      chruby_rubies -p
+      chruby-rubies -p
       ;;
     system) chruby_reset ;;
     *)
