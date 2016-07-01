@@ -14,7 +14,7 @@ class Chruby < Formula
   def caveats; <<-EOS.undent
     Add the following to the ~/.bashrc or ~/.zshrc file:
 
-      source #{opt_share}/chruby/chruby.sh
+      source #{opt_share}/chruby-ng/chruby-ng.sh
 
     By default chruby will search for Rubies installed into /opt/rubies/ or
     ~/.rubies/. For non-standard installation locations, simply set the RUBIES

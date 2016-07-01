@@ -3,7 +3,7 @@ n=100
 
 RUBIES=("$root/test/opt/rubies/ruby-2.0.0-p353")
 
-. "$root/share/chruby/chruby.sh"
+. "$root/share/chruby-ng/chruby-ng.sh"
 . "$root/share/chruby/auto.sh"
 
 for i in {1..3}; do
