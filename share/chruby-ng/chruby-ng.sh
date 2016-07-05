@@ -1,5 +1,5 @@
 #!/bin/bash
-CHRUBY_VERSION="0.4.1"
+CHRUBY_VERSION="0.4.2"
 RUBIES=()
 
 for dir in "$PREFIX/opt/rubies" "$HOME/.rubies"; do
@@ -30,7 +30,6 @@ function chruby_reset(){
   hash -r
 }
 
-
 # export RUBY_ENGINE, RUBY_VERSION, GEM_ROOT
 function chruby_env(){
 RUBYGEMS_GEMDEPS="" $1 - <<EOF
@@ -42,30 +41,6 @@ begin
   rescue Exception
 end
 EOF
-}
-
-#usage chruby-export /path/to/ruby
-#get current ruby export variables: chruby_export $(where ruby | head -1)
-function chruby-export(){
-  local RUBY_PATH="$1/bin/ruby"
-  if [[ ! -x "$RUBY_PATH" ]]; then
-    echo "chruby_export: $RUBY_PATH/bin/ruby not executable" >&2
-    return 1
-  fi
-  cat <<EOF
-export RUBYGEMS_GEMDEPS=-
-export RUBY_ROOT="${RUBY_PATH%%/bin/ruby}"
-export PATH="\$RUBY_ROOT/bin:\$PATH"
-$(chruby_env "$RUBY_PATH")
-export PATH="\${GEM_ROOT:+\$GEM_ROOT/bin:}\$PATH"
-EOF
-  if (( UID != 0 )); then
-    cat<<EOF
-export GEM_HOME="\$HOME/.gem/$RUBY_ENGINE/$RUBY_VERSION"
-export GEM_PATH="\$GEM_HOME\${GEM_ROOT:+:\$GEM_ROOT}\${GEM_PATH:+:\$GEM_PATH}"
-export PATH="\$GEM_HOME/bin:\$PATH"
-EOF
-  fi
 }
 
 function chruby_use(){
@@ -99,10 +74,8 @@ chruby-rubies(){
       fi
       dir="${dir%%/}"; ruby="${dir##*/}"
       if [[ "$dir" == "$RUBY_ROOT" ]]; then
-        #echo " *\t ${RUBYOPT} \t$ruby_path"
         printf " * %-20s\t%s\t%s\n" "${ruby}" "${RUBYOPT}" "$ruby_path"
       else
-        #echo " -\t${ruby} \t$ruby_path" | column -t
         printf " - %-20s\t%s\t%s\n" "${ruby}" "" "$ruby_path"
       fi
     done
@@ -123,7 +96,7 @@ function chruby(){
     "-p")
       chruby-rubies -p
       ;;
-    system) chruby_reset ;;
+    system|sys) chruby_reset ;;
     *)
       local dir ruby match
       for dir in "${RUBIES[@]}"; do

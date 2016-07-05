@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+chruby_sh="${0%/*}/../share/chruby-ng/chruby-ng.sh"
+source "$chruby_sh"
+
+case "$1" in
+	-h|--help)
+		echo "usage: chruby-export RUBY"
+    echo "example: chruby-export ruby-2.3.1 | sed -e "s:$HOME:\$HOME:g""
+		exit
+		;;
+	-V|--version)
+		echo "chruby version $CHRUBY_VERSION"
+		exit
+		;;
+esac
+
+if (( $# == 0 )); then
+	echo "chruby-export: RUBY required" >&2
+	exit 1
+fi
+
+#usage chruby-export -p /path/to/ruby
+#chruby-export ruby-version
+
+for dir in "${RUBIES[@]}"; do
+  dir="${dir%%/}"; ruby="${dir##*/}"
+  case "$ruby" in
+    "$1")  match="$dir" && break ;;
+    *"$1"*)  match="$dir" ;;
+  esac
+done
+
+if [[ -z "$match" ]]; then
+  echo "chruby: unknown Ruby: $1" >&2
+  exit 1
+fi
+
+RUBY_PATH="$match/bin/ruby"
+if [[ ! -x "$RUBY_PATH" ]]; then
+  echo "chruby-export: $RUBY_PATH/bin/ruby not executable" >&2
+  return 1
+fi
+shift
+chruby_use "$match" "$*"
+
+  cat <<EOF
+export RUBYGEMS_GEMDEPS=${RUBYGEMS_GEMDEPS:--}
+$(chruby_env "$RUBY_PATH")
+export RUBY_ROOT="$RUBY_ROOT"
+export PATH="$GEM_HOME/bin:\\
+             $GEM_ROOT/bin:\\
+             $RUBY_ROOT/bin:\\
+             \$PATH"
+EOF
+if (( UID != 0 )); then
+  cat<<EOF
+export GEM_HOME="$GEM_HOME"
+export GEM_PATH="$GEM_PATH"
+EOF
+fi
