@@ -1,5 +1,5 @@
-NAME=chruby
-VERSION=0.4.1
+VERSION=0.4.2
+NAME=chruby-ng
 AUTHOR=postmodern
 URL=https://github.com/$(AUTHOR)/$(NAME)
 
@@ -8,7 +8,7 @@ INSTALL_DIRS=`find $(DIRS) -type d 2>/dev/null`
 INSTALL_FILES=`find $(DIRS) -type f 2>/dev/null`
 DOC_FILES=*.md *.txt
 
-PKG_DIR=pkg
+PKG_DIR=pgp
 PKG_NAME=$(NAME)-$(VERSION)
 PKG=$(PKG_DIR)/$(PKG_NAME).tar.gz
 SIG=$(PKG).asc
@@ -16,7 +16,11 @@ SIG=$(PKG).asc
 PREFIX?=/usr/local
 DOC_DIR=$(PREFIX)/share/doc/$(PKG_NAME)
 
-all:
+.PHONY: list
+list:
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null |\
+	awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' |\
+	sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
 
 pkg:
 	mkdir $(PKG_DIR)
