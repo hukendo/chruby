@@ -1,4 +1,4 @@
-. ./share/chruby/auto.sh
+. ./share/chruby-ng/auto.sh
 . ./test/helper.sh
 
 function setUp()
@@ -19,7 +19,7 @@ function test_chruby_auto_loaded_in_bash()
 {
 	[[ -n "$BASH_VERSION" ]] || return
 
-	local command=". $PWD/share/chruby/auto.sh && trap -p DEBUG"
+	local command=". $PWD/share/chruby-ng/auto.sh && trap -p DEBUG"
 	local output="$("$SHELL" -c "$command")"
 
 	assertTrue "did not add a trap hook for chruby_auto" \
@@ -30,7 +30,7 @@ function test_chruby_auto_loaded_twice_in_zsh()
 {
 	[[ -n "$ZSH_VERSION" ]] || return
 
-	. ./share/chruby/auto.sh
+	. ./share/chruby-ng/auto.sh
 
 	assertNotEquals "should not add chruby_auto twice" \
 		        "$preexec_functions" \
@@ -42,7 +42,7 @@ function test_chruby_auto_loaded_twice()
 	RUBY_AUTO_VERSION="dirty"
 	PROMPT_COMMAND="chruby_auto"
 
-	. ./share/chruby/auto.sh
+	. ./share/chruby-ng/auto.sh
 
 	assertNull "RUBY_AUTO_VERSION was not unset" "$RUBY_AUTO_VERSION"
 }
