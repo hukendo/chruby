@@ -1,6 +1,6 @@
 # chruby-ng
 
-[![Build Status](https://travis-ci.org/hukendo/chruby.svg?branch=master)](https://travis-ci.org/hukendo/chruby)
+[![Build Status](https://travis-ci.org/hukendo/chruby-ng.svg?branch=master)](https://travis-ci.org/hukendo/chruby-ng)
 
 Changes the current Ruby.
 
@@ -36,7 +36,7 @@ Changes the current Ruby.
 
 ## Install
 
-    wget -O chruby-0.4.2.tar.gz https://github.com/hukendo/chruby-ng/archive/v0.4.1.tar.gz
+    wget -O chruby-0.4.2.tar.gz https://github.com/hukendo/chruby-ng/archive/v0.4.2.tar.gz
     tar -xzvf chruby-0.4.2.tar.gz
     cd chruby-0.4.2/
     sudo make install
@@ -47,8 +47,8 @@ All releases are [PGP] signed for security. Instructions on how to import my
 PGP key can be found on my [blog][1]. To verify that a release was not tampered
 with:
 
-    wget https://raw.github.com/postmodern/chruby/master/pkg/pgp/chruby-ng-0.4.2.tar.gz.asc
-    gpg --verify chruby-ng-0.4.2.tar.gz.asc chruby-0.4.2.tar.gz
+    wget https://raw.github.com/hukendo/chruby-ng/master/pkg/pgp/chruby-0.4.2.tar.gz.asc
+    gpg --verify chruby-0.4.2.tar.gz.asc chruby-0.4.2.tar.gz
 
 ### setup.sh
 
@@ -61,6 +61,7 @@ script as root or via `sudo`:
 
 chruby can also be installed with [homebrew]:
 
+    brew tap hukendo/tap
     brew install chruby-ng
 
 Or the absolute latest chruby can be installed from source:
@@ -98,8 +99,7 @@ Installing to `/opt/rubies` or `~/.rubies`:
 
     ruby-install ruby
     ruby-install jruby
-    ruby-install rubinius
-    ruby-install maglev
+    ruby-install rbx
 
 #### ruby-build
 
@@ -117,7 +117,7 @@ Installing to `/opt/rubies`:
 Add the following to the `~/.bashrc` or `~/.zshrc` file:
 
 ``` bash
-source /usr/local/share/chruby-ng/chruby-ng.sh
+source /usr/local/share/chruby/chruby.sh
 ```
 
 ### System Wide
@@ -127,7 +127,7 @@ If you wish to enable chruby system-wide, add the following to
 
 ``` bash
 if [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
-  source /usr/local/share/chruby-ng/chruby-ng.sh
+  source /usr/local/share/chruby/chruby.sh
   ...
 fi
 ```
@@ -145,10 +145,10 @@ For Rubies installed in non-standard locations, simply append their paths to
 the `RUBIES` variable:
 
 ``` bash
-source /usr/local/share/chruby-ng/chruby-ng.sh
+source /usr/local/share/chruby/chruby.sh
 
 RUBIES+=(
-  /opt/jruby-1.7.0
+  /opt/jruby-1.9.0
   "$HOME/src/rubinius"
 )
 ```
@@ -169,12 +169,6 @@ RUBIES+=(~/.rvm/rubies/*)
 RUBIES+=(~/.rbenv/versions/*)
 ```
 
-#### rbfu
-
-``` bash
-RUBIES+=(~/.rbfu/rubies/*)
-```
-
 ### Auto-Switching
 
 If you want chruby to auto-switch the current version of Ruby when you `cd`
@@ -182,7 +176,7 @@ between your different projects, simply load `auto.sh` in `~/.bashrc` or
 `~/.zshrc`:
 
 ``` bash
-source /usr/local/share/chruby-ng/chruby-ng.sh
+source /usr/local/share/chruby/chruby.sh
 source /usr/local/share/chruby/auto.sh
 ```
 
@@ -292,6 +286,15 @@ Switch to an arbitrary Ruby on the fly:
 
     $ chruby_use /path/to/ruby
 
+Show export ruby exviroment
+
+    $ chruby-export ruby
+
+Add export ruby environment to .bashrc $HOME path
+
+    $ chruby-export ruby | sed -e s:$HOME:\$HOME:g >> ~/.bashrc
+
+
 ## Uninstall
 
 1. Remove or comment out chruby from your shell configuration.
@@ -306,34 +309,7 @@ Switch to an arbitrary Ruby on the fly:
 * [ry]
 * [ruby-version]*
 
-\* *Deprecated in favor of chruby.*
 
-## Endorsements
-
-> yeah `chruby` is nice, does the limited thing of switching really good,
-> the only hope it never grows
-
--- [Michal Papis](https://twitter.com/mpapis/status/258049391791841280) of [RVM]
-
-> I just looooove [chruby](#readme) For the first time I'm in total control of
-> all aspects of my Ruby installation.
-
--- [Marius Mathiesen](https://twitter.com/zmalltalker/status/271192206268829696)
-
-> Written by Postmodern, it's basically the simplest possible thing that can
-> work.
-
--- [Steve Klabnik](http://blog.steveklabnik.com/posts/2012-12-13-getting-started-with-chruby)
-
-> So far, I'm a huge fan. The tool does what it advertises exactly and simply.
-> The small feature-set is also exactly and only the features I need.
-
--- [Patrick Brisbin](http://pbrisbin.com/posts/chruby)
-
-> I wrote ruby-version; however, chruby is already what ruby-version wanted to
-> be. I've deprecated ruby-version in favor of chruby.
-
--- [Wil Moore III](https://github.com/wilmoore)
 
 ## Credits
 

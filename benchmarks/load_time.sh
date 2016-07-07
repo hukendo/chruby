@@ -6,7 +6,7 @@ for i in {1..3}; do
 
 	time (
 		for ((i=0; i<$n; i+=1)); do
-			source "$root/share/chruby-ng/chruby-ng.sh"
+			source "$root/share/chruby/chruby.sh"
 		done
 	)
 done

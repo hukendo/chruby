@@ -5,7 +5,7 @@ export PREFIX="$PWD/test"
 export HOME="$PREFIX/home"
 export PATH="$PWD/bin:$PATH"
 
-. ./share/chruby-ng/chruby-ng.sh
+. ./share/chruby/chruby.sh
 chruby_reset
 
 test_ruby_engine="ruby"

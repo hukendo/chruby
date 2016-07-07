@@ -1,7 +1,7 @@
 root="${0%/*}/.."
 n=1000
 
-. "$root/share/chruby-ng/chruby-ng.sh"
+. "$root/share/chruby/chruby.sh"
 
 RUBIES=(
 	/opt/rubies/ruby-1.9.3-p448

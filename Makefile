@@ -1,14 +1,14 @@
 VERSION=0.4.2
 NAME=chruby-ng
-AUTHOR=postmodern
-URL=https://github.com/$(AUTHOR)/$(NAME)
+AUTHOR=hukendo
+URL=https://github.com/hukendo/$(NAME)
 
 DIRS=etc lib bin sbin share
 INSTALL_DIRS=`find $(DIRS) -type d 2>/dev/null`
 INSTALL_FILES=`find $(DIRS) -type f 2>/dev/null`
 DOC_FILES=*.md *.txt
 
-PKG_DIR=pgp
+PKG_DIR=pkg
 PKG_NAME=$(NAME)-$(VERSION)
 PKG=$(PKG_DIR)/$(PKG_NAME).tar.gz
 SIG=$(PKG).asc
@@ -34,8 +34,7 @@ build: pkg
 sign: $(PKG)
 	gpg --sign --detach-sign --armor $(PKG)
 	git add $(PKG).asc
-	git commit $(PKG).asc -m "Added PGP signature for v$(VERSION)"
-	git push origin master
+	git commit $(PKG).asc -m "Added PGP signature for v$(VERSION)"s
 
 verify: $(PKG) $(SIG)
 	gpg --verify $(SIG) $(PKG)
@@ -75,5 +74,3 @@ install:
 uninstall:
 	for file in $(INSTALL_FILES); do rm -f $(DESTDIR)$(PREFIX)/$$file; done
 	rm -rf $(DESTDIR)$(DOC_DIR)
-
-.PHONY: build download sign verify clean check test tag release rpm install uninstall all
